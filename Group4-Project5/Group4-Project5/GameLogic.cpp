@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <map>
 #include <fstream>
 
 #include "Dice.h"
@@ -16,6 +17,7 @@
 
 using namespace std;
 
+// Use map to show who owns what propert(0 - no one, 1 - player1, 2 - player2, -1 - not ownable)
 
 GameLogic::GameLogic(string name1, string name2) {
 	player1 = Player(name1, 1);
@@ -23,6 +25,15 @@ GameLogic::GameLogic(string name1, string name2) {
 	dice1 = Dice();
 	dice2 = Dice();
 	player1Turn = true;
+	FillGameBoard();
+	for (int i = 0; i < boardSquares.size(); ++i) {
+		if (boardSquares.at(i)->GetType() == "Action") {
+			ownershipMap.insert({ i, -1 });
+		}
+		else {
+			ownershipMap.insert({ i, 0 });
+		}
+	}
 }
 
 void GameLogic::PlayGame() {
@@ -126,6 +137,8 @@ void GameLogic::FillGameBoard() {
 void GameLogic::PrintBoard() {
 	for (int i = 0; i < boardSquares.size(); ++i) {
 		boardSquares.at(i)->PrintDescription();
+		cout << endl << endl;
+		cout << i << " : " << ownershipMap.at(i) << endl;
 		cout << endl;
 	}
 }

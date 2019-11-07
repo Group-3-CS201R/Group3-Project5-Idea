@@ -21,7 +21,6 @@ using namespace std;
 int main() {
 	GameLogic gameObject("John", "Jane");
 
-	gameObject.FillGameBoard();
 	gameObject.PrintBoard();
 
 	return 0;

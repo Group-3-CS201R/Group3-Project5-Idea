@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -15,10 +16,16 @@ public:
 	string GetColor();
 	void MovePosition(int toMove);
 	int GetPosition();
+	bool IsInJail();
+	void AddToColorMap(string colorToAdd);
+	bool CanPurchaseHouse(string colorToPurchase);
 private:
 	string playerName;
 	string playerColor;
 	int playerNum;
 	int netWorth;
 	int playerPosition;
+	int rollsInJail;
+	bool inJail;
+	map<string, int> numOfColor;
 };

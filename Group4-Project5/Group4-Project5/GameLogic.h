@@ -20,11 +20,14 @@ class GameLogic {
 public:
 	GameLogic(string name1, string name2, string name3, string name4, string name5, string name6);
 	void PlayGame();
-	void PropertySequence(int position, bool p1Turn);
+	void PropertySequence(int position);
 	void AuctionSequence();
 	void FillGameBoard();
 	void PrintBoard();
-	void SequenceDecision(int roll, bool p1Turn);
+	void SequenceDecision(int roll);
+	void RailroadSequence(int position);
+	void TestPropSeq();
+
 private:
 	Dice dice1;
 	Dice dice2;

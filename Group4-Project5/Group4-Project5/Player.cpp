@@ -9,7 +9,7 @@ using namespace std;
 Player::Player() {}
 
 Player::Player(string name, int num) : playerName(name), playerNum(num), netWorth(1500), playerPosition(0),
-inJail(false), rollsInJail(0)
+inJail(false), rollsInJail(0), numRailRoads(0)
 {
 	numOfColor.insert({ "PINK", 0 });
 	numOfColor.insert({ "ORANGE", 0 });
@@ -30,6 +30,9 @@ void Player::PrintPlayerInfo() {
 
 void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
+	if (playerPosition > 39) {
+		playerPosition -= 39;
+	}
 }
 
 int Player::GetPosition() {

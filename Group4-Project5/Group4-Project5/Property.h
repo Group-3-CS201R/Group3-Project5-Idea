@@ -15,13 +15,16 @@ public:
 	void PrintDescription();
 	bool PropIsOwned();
 	void PurchaseProp();
+	void SetOwnedBy(int player);
 	string GetColor();
+	int GetOwnedBy();
 	int GetCost();
 	int GetRent();
 	int GetMortgage();
 private:
 	string propColor;
 	bool propOwned;
+	int ownedByNum;
 	int propCost;
 	int housesOnProp;
 	vector<int> rents;

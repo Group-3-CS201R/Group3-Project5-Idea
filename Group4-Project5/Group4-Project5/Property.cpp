@@ -10,7 +10,7 @@ Property::Property(string name, string color, int cost, int mortgage, int rentBa
 	int rentThreeHouse, int rentFourHouse, int rentHotel, int houseBuyCost, int hotelBuyCost) :
 	Tile(name, "Property"), propColor(color), propOwned(false), housesOnProp(0), 
 	mortgageValue(mortgage), houseCost(houseBuyCost), hotelCost(hotelBuyCost), hotelIsOwned(false),
-	propCost(cost)
+	propCost(cost), ownedByNum(0)
 {
 	rents.resize(6);
 	rents.at(0) = rentBase;
@@ -25,12 +25,24 @@ bool Property::PropIsOwned() {
 	return propOwned;
 }
 
+int Property::GetCost() {
+	return propCost;
+}
+
 void Property::PurchaseProp() {
 	propOwned = true;
 }
 
 string Property::GetColor() {
 	return propColor;
+}
+
+int Property::GetOwnedBy() {
+	return ownedByNum;
+}
+
+void Property::SetOwnedBy(int player) {
+	ownedByNum = player;
 }
 
 // textual based data representation that will be deleted if/when GUI is created

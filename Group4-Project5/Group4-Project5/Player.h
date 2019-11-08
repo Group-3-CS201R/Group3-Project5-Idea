@@ -25,6 +25,7 @@ public:
 private:
 	string playerName;
 	string playerColor;
+	int numRailRoads;
 	int playerNum;
 	int netWorth;
 	int playerPosition;

@@ -7,13 +7,30 @@
 using namespace std;
 
 Railroad::Railroad(string name, int cost, int rentBase, int rentWithTwo,
-	int rentWithThree, int rentWithFour, int mortgage) : Tile(name, "Railroad"), propCost(cost), numOwned(0), mortgageValue(mortgage)
+	int rentWithThree, int rentWithFour, int mortgage) : Tile(name, "Railroad"), propCost(cost), numOwned(0), mortgageValue(mortgage),
+	propOwned(false), ownedByNum(0)
 {
 	rents.resize(4);
 	rents.at(0) = rentBase;
 	rents.at(1) = rentWithTwo;
 	rents.at(2) = rentWithThree;
 	rents.at(3) = rentWithFour;
+}
+
+int Railroad::GetCost() {
+	return propCost;
+}
+
+int Railroad::GetOwnedBy() {
+	return ownedByNum;
+}
+
+void Railroad::SetOwnedBy(int player) {
+	ownedByNum = player;
+}
+
+bool Railroad::PropIsOwned() {
+	return propOwned;
 }
 
 void Railroad::PrintDescription() {

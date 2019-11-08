@@ -19,9 +19,9 @@
 using namespace std;
 
 int main() {
-	GameLogic gameObject("John", "Jane");
+	GameLogic gameObject("John", "Jane", "jack", "jace", "brace", "broqn");
 
-	gameObject.PrintBoard();
+	gameObject.PlayGame();
 
 	return 0;
 }

@@ -50,14 +50,14 @@ void GameLogic::PlayGame() {
 			else {
 				if (players.at(currentTurn).GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
 				players.at(currentTurn).MovePosition(turnRoll);
-				//FIXME: Execute purchse/pay-rent/action property action
+				SequenceDecision(players.at(currentTurn).GetPosition());
 			}
 			dice1.RollDice();
 			dice2.RollDice();
 			turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
 		}
 		// this handles the case when the dice rolls do not have the same values
-		if (players.at(currentTurn).GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
+		//FIXME: Move this error checking into Player class
 		players.at(currentTurn).MovePosition(turnRoll);
 		if (currentTurn < 5) {
 			currentTurn++;
@@ -65,58 +65,75 @@ void GameLogic::PlayGame() {
 		else {
 			currentTurn = 0;
 		}
+		cout << "Turn: " << currentTurn << " Roll: " << turnRoll << endl;
 	}
 }
 
-//FIXME: Should handle accessing the correct conatiner for the sequence. Possibly pass this to the property function
-void GameLogic::SequenceDecision(int roll, bool p1Turn) {
-	if (properties.find(roll) != properties.end()) {
-		//PropertySequence(roll, turn);
+
+void GameLogic::SequenceDecision(int position) {
+	if (properties.find(position) != properties.end()) {
+		PropertySequence(position);
 	}
-	else if (railroads.find(roll) != railroads.end()) {
-		//RailroadSequence(roll, turn);
+	else if (railroads.find(position) != railroads.end()) {
+		RailroadSequence(position);
 	}
-	else if (utilities.find(roll) != utilities.end()) {
-		//utilitiesSequence(roll, turn)
+	else if (utilities.find(position) != utilities.end()) {
+		//FIXME:UtilitiesSequence(position)
 	}
 	else {
-		//actionSequence(roll, turn);
+		//FIXME:ActionSequence(position);
 	}
 }
 
-/*
-void GameLogic::PropertySequence(int position, bool p1Turn) {
-	int cost = (boardSquares.at(position))->GetCost();
+void GameLogic::TestPropSeq() {
+	currentTurn = 3;
+	cout << players.at(3).GetNetWorth() << endl;
+	cout << properties[3].GetOwnedBy() << endl;
+	PropertySequence(3);
+	cout << properties[3].GetOwnedBy() << endl;
+	cout << players.at(3).GetNetWorth() << endl;
+}
+
+void GameLogic::RailroadSequence(int position) {
+	int cost = railroads[position].GetCost();
 	string userResponse;
-	if ((boardSquares.at(position))->PropIsOwned()) {
-		if (p1Turn) {
-			player1.PayRent(cost);
-			player2.CollectRent(cost);
-		}
-		else {
-			player2.PayRent(cost);
-			player1.CollectRent(cost);
-		}
+	if (railroads[position].PropIsOwned()) {
+		players.at(currentTurn).PayRent(cost);
+		players.at(railroads[position].GetOwnedBy()).CollectRent(cost);
 	}
 	else {
+		//FIXME: Should display the railroad to purchase with full info
+		cout << "Would you like to purchase this railroad? Cost: $" << cost << endl;
+		//FIXME: Needs to error check for proper input
+		cin >> userResponse;
+		if (userResponse == "yes") {
+			// FIXME: Check if player has the networth to purchase this property
+			players.at(currentTurn).PurchaseProperty(railroads[position].GetCost());
+			railroads[position].SetOwnedBy(currentTurn);
+		}
+	}
+}
+
+void GameLogic::PropertySequence(int position) {
+	int cost = properties[position].GetCost();
+	string userResponse;
+	if (properties[position].PropIsOwned()) {
+		players.at(currentTurn).PayRent(cost);
+		players.at(properties[position].GetOwnedBy()).CollectRent(cost);
+	}
+	else {
+		//FIXME: Should display the property to purchase, with full info
 		cout << "Would you like to purchase this property? Cost: $" << cost << endl;
 		//FIXME: Needs to error check for proper input
 		cin >> userResponse;
 		if (userResponse == "yes") {
 			// FIXME: Check if player has the networth to purchase this property
-			((Property*)(boardSquares.at(position)))->PurchaseProp();
-			if (p1Turn) {
-				player1.PurchaseProperty(cost);
-				// add color to player1 list of owned properties
-			}
-			else {
-				player2.PurchaseProperty(cost);
-				// add color to player2 list of owned properties
-			}
+			players.at(currentTurn).PurchaseProperty(properties[position].GetCost());
+			properties[position].SetOwnedBy(currentTurn);
 		}
 	}
 }
-*/
+
 
 void GameLogic::AuctionSequence() {
 	//Program this late if time allows

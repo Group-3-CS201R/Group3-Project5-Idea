@@ -28,10 +28,11 @@ void Player::PrintPlayerInfo() {
 	cout << netWorth << endl;
 }
 
+//FIXME: Change to 39 after testing
 void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
-	if (playerPosition > 39) {
-		playerPosition -= 39;
+	if (playerPosition > 17) {
+		playerPosition -= 17;
 	}
 }
 

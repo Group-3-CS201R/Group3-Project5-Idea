@@ -16,4 +16,7 @@ void Action::PrintDescription() {
 	if (this->GetName() == "GO") {
 		cout << "You passed go. You receive $200 from the bank" << endl;
 	}
+	else {
+		cout << this->GetName() << endl;
+	}
 }

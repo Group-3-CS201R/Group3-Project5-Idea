@@ -43,6 +43,12 @@ int Property::GetOwnedBy() {
 
 void Property::SetOwnedBy(int player) {
 	ownedByNum = player;
+	propOwned = true;
+}
+
+//FIXME: Should use number of houses to decide how much rent. Use a map the maps <color, housesOwned>
+int Property::GetRent() {
+	return rents.at(0);
 }
 
 // textual based data representation that will be deleted if/when GUI is created

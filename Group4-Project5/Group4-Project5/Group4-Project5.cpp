@@ -19,7 +19,7 @@
 using namespace std;
 
 int main() {
-	GameLogic gameObject("John", "Jane", "jack", "jace", "brace", "broqn");
+	GameLogic gameObject;
 
 	gameObject.PlayGame();
 

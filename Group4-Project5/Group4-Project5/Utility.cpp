@@ -7,11 +7,28 @@
 using namespace std;
 
 Utility::Utility(string name, int cost, int mortgage) : Tile(name, "Utility"), propCost(cost),
-	mortgageValue(mortgage), numOwned(0) {}
+	mortgageValue(mortgage), numOwned(0), propOwned(false), ownedByNum(0) {}
+
+int Utility::GetOwnedBy() {
+	return ownedByNum;
+}
+
+void Utility::SetOwnedBy(int num) {
+	ownedByNum = num;
+	propOwned = true;
+}
+
+int Utility::GetCost() {
+	return propCost;
+}
+
+bool Utility::PropIsOwned() {
+	return propOwned;
+}
 
 void Utility::PrintDescription() {
 	cout << this->GetName() << endl;
-	cout << propCost << endl;
+	cout << "Cost" << propCost << endl;
 	cout << "Mortgage value: $" << mortgageValue << endl;
 }
 

@@ -19,13 +19,8 @@ using namespace std;
 
 // Use map to show who owns what propert(0 - no one, 1 - player1, 2 - player2, -1 - not ownable)
 
-GameLogic::GameLogic(string name1, string name2, string name3, string name4, string name5, string name6) {
-	players.push_back(Player(name1, 1));
-	players.push_back(Player(name2, 2));
-	players.push_back(Player(name3, 3));
-	players.push_back(Player(name4, 4));
-	players.push_back(Player(name5, 5));
-	players.push_back(Player(name6, 6));
+GameLogic::GameLogic() {
+	FillPlayersVect();
 	dice1 = Dice();
 	dice2 = Dice();
 	currentTurn = 0;
@@ -36,22 +31,31 @@ void GameLogic::PlayGame() {
 	int numDoubles = 0;
 	int turnRoll = 0;
 	int dummy = 0;
+	string stallyBoi;
 	while (true) {
+		cout << endl << "Player: " << (currentTurn + 1) <<  ".\nPress any key to roll -> ";
+		cin >> stallyBoi;
+		cin.ignore();
 		dice1.RollDice();
 		dice2.RollDice();
 		turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
+		cout << endl << "Player: " << (currentTurn + 1) << " Roll: " << turnRoll << endl;
+
 		// this handles the case of 1 or more dice rolls that have the same value
 		while (dice1.GetDiceValue() == dice2.GetDiceValue()) {
 			numDoubles++;
+			cout << endl << "You have rolled " << numDoubles << " double. Three doubles in a row will land you in Jail. Shake those dice carefully!" << endl << endl;
 			if (numDoubles == 3) {
 				//FIXME: Execute go to jail action for current player
 				break;
 			}
 			else {
-				if (players.at(currentTurn).GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
 				players.at(currentTurn).MovePosition(turnRoll);
-				SequenceDecision(players.at(currentTurn).GetPosition());
+				SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
 			}
+			cout << endl << "Player: " << (currentTurn + 1) << ".\nPress any key to roll -> ";
+			cin >> stallyBoi;
+			cin.ignore();
 			dice1.RollDice();
 			dice2.RollDice();
 			turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
@@ -59,18 +63,16 @@ void GameLogic::PlayGame() {
 		// this handles the case when the dice rolls do not have the same values
 		//FIXME: Move this error checking into Player class
 		players.at(currentTurn).MovePosition(turnRoll);
-		if (currentTurn < 5) {
-			currentTurn++;
-		}
-		else {
+		SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
+		currentTurn++;
+		if (currentTurn == players.size()) {
 			currentTurn = 0;
 		}
-		cout << "Turn: " << currentTurn << " Roll: " << turnRoll << endl;
 	}
 }
 
 
-void GameLogic::SequenceDecision(int position) {
+void GameLogic::SequenceDecision(int position, int roll) {
 	if (properties.find(position) != properties.end()) {
 		PropertySequence(position);
 	}
@@ -78,20 +80,11 @@ void GameLogic::SequenceDecision(int position) {
 		RailroadSequence(position);
 	}
 	else if (utilities.find(position) != utilities.end()) {
-		//FIXME:UtilitiesSequence(position)
+		UtilitySequence(position, roll);
 	}
 	else {
-		//FIXME:ActionSequence(position);
+		ActionSequence(position);
 	}
-}
-
-void GameLogic::TestPropSeq() {
-	currentTurn = 3;
-	cout << players.at(3).GetNetWorth() << endl;
-	cout << properties[3].GetOwnedBy() << endl;
-	PropertySequence(3);
-	cout << properties[3].GetOwnedBy() << endl;
-	cout << players.at(3).GetNetWorth() << endl;
 }
 
 void GameLogic::RailroadSequence(int position) {
@@ -102,8 +95,8 @@ void GameLogic::RailroadSequence(int position) {
 		players.at(railroads[position].GetOwnedBy()).CollectRent(cost);
 	}
 	else {
-		//FIXME: Should display the railroad to purchase with full info
-		cout << "Would you like to purchase this railroad? Cost: $" << cost << endl;
+		railroads[position].PrintDescription();
+		cout << endl << "Would you like to purchase this property? -> ";
 		//FIXME: Needs to error check for proper input
 		cin >> userResponse;
 		if (userResponse == "yes") {
@@ -118,12 +111,13 @@ void GameLogic::PropertySequence(int position) {
 	int cost = properties[position].GetCost();
 	string userResponse;
 	if (properties[position].PropIsOwned()) {
+		cout << "This property is owned by player number: " << properties[position].GetOwnedBy() << " you owe $" << properties[position].GetRent() << " in rent.";
 		players.at(currentTurn).PayRent(cost);
 		players.at(properties[position].GetOwnedBy()).CollectRent(cost);
 	}
 	else {
-		//FIXME: Should display the property to purchase, with full info
-		cout << "Would you like to purchase this property? Cost: $" << cost << endl;
+		properties[position].PrintDescription();
+		cout << endl << "Would you like to purchase this property? -> ";
 		//FIXME: Needs to error check for proper input
 		cin >> userResponse;
 		if (userResponse == "yes") {
@@ -132,6 +126,35 @@ void GameLogic::PropertySequence(int position) {
 			properties[position].SetOwnedBy(currentTurn);
 		}
 	}
+}
+
+void GameLogic::UtilitySequence(int position, int roll) {
+	int cost = utilities[position].GetCost();
+	string userResponse;
+	if (utilities[position].PropIsOwned()) {
+		//FIXME: Print rent cost message
+		players.at(currentTurn).PayRent(cost);
+		players.at(utilities[position].GetOwnedBy()).CollectRent(cost);
+	}
+	else {
+		utilities[position].PrintDescription();
+		cout << endl << "Would you like to purchase this property? -> ";
+		//FIXME: Needs to error check for proper input
+		cin >> userResponse;
+		if (userResponse == "yes") {
+			// FIXME: Check if player has the networth to purchase this property
+			players.at(currentTurn).PurchaseProperty(utilities[position].GetCost());
+			utilities[position].SetOwnedBy(currentTurn);
+		}
+	}
+}
+
+void GameLogic::ActionSequence(int position) {
+	//FIXME: This is for testing. Needs to be removed later.
+	if (actions.find(position) == actions.end()) {
+		cout << "Failed" << endl;
+	}
+	actions[position].PrintDescription();
 }
 
 
@@ -200,23 +223,24 @@ void GameLogic::FillGameBoard() {
 	}
 }
 
-void GameLogic::PrintBoard() {
-	for (int i = 0; i < 18; ++i) {
-		if (properties.find(i) != properties.end()) {
-			//PropertySequence(roll, turn);
-			properties[i].PrintDescription();
+void GameLogic::FillPlayersVect() {
+	string userName;
+	string keepAdding;
+	cout << "Welcome to Monopoly!" << endl;
+	cout << "Enter at least two, and up to six, players' names to start playing the game." << endl << endl;
+	for (int i = 0; i < 6; ++i) {
+		cout << "Enter name of player #" << (i + 1) << " -> ";
+		getline(cin, userName);
+		players.push_back(Player(userName, (i + 1)));
+		if (i > 0) {
+			cout << endl << "Would you like to add another player?\nPress y to add another player, any other key to start playing. -> ";
+			getline(cin, keepAdding);
+			if (keepAdding != "y" && keepAdding != "Y") {
+				break;
+			}
 		}
-		else if (railroads.find(i) != railroads.end()) {
-			//RailroadSequence(roll, turn);
-			railroads[i].PrintDescription();
-		}
-		else if (utilities.find(i) != utilities.end()) {
-			//utilitiesSequence(roll, turn)
-			utilities[i].PrintDescription();
-		}
-		else {
-			//actionSequence(roll, turn);
-			actions[i].PrintDescription();
-		}
+		cout << endl;
 	}
+	cout << endl << "Let's get started!\n" << endl;
 }
+

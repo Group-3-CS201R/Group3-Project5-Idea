@@ -27,6 +27,7 @@ int Railroad::GetOwnedBy() {
 
 void Railroad::SetOwnedBy(int player) {
 	ownedByNum = player;
+	propOwned = true;
 }
 
 bool Railroad::PropIsOwned() {
@@ -35,7 +36,7 @@ bool Railroad::PropIsOwned() {
 
 void Railroad::PrintDescription() {
 	cout << this->GetName() << endl;
-	cout << propCost << endl;
+	cout << "Cost: $" << propCost << endl;
 	cout << endl << "Rent: \t$" << rents.at(0) << endl;
 	cout << "2 Railroads : \t$" << rents.at(1) << endl;
 	cout << "3 Railroads : \t$" << rents.at(2) << endl;

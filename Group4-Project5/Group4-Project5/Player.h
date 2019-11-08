@@ -19,6 +19,9 @@ public:
 	bool IsInJail();
 	void AddToColorMap(string colorToAdd);
 	bool CanPurchaseHouse(string colorToPurchase);
+	void PayRent(int toPay);
+	void CollectRent(int toCollect);
+	void PurchaseProperty(int propCost);
 private:
 	string playerName;
 	string playerColor;

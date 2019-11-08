@@ -18,16 +18,26 @@ using namespace std;
 
 class GameLogic {
 public:
-	GameLogic(string name1, string name2);
+	GameLogic(string name1, string name2, string name3, string name4, string name5, string name6);
 	void PlayGame();
+	void PropertySequence(int position, bool p1Turn);
+	void AuctionSequence();
 	void FillGameBoard();
 	void PrintBoard();
+	void SequenceDecision(int roll, bool p1Turn);
 private:
 	Dice dice1;
 	Dice dice2;
 	Player player1;
 	Player player2;
-	vector<Tile*> boardSquares;
-	map<int, int> ownershipMap;
-	bool player1Turn;
+	Player player3;
+	Player player4;
+	Player player5;
+	Player player6;
+	vector<Player> players;
+	int currentTurn;
+	map<int, Property> properties;
+	map<int, Railroad> railroads;
+	map<int, Utility> utilities;
+	map<int, Action> actions;
 };

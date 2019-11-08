@@ -19,27 +19,23 @@ using namespace std;
 
 // Use map to show who owns what propert(0 - no one, 1 - player1, 2 - player2, -1 - not ownable)
 
-GameLogic::GameLogic(string name1, string name2) {
-	player1 = Player(name1, 1);
-	player2 = Player(name2, 2);
+GameLogic::GameLogic(string name1, string name2, string name3, string name4, string name5, string name6) {
+	players.push_back(Player(name1, 1));
+	players.push_back(Player(name2, 2));
+	players.push_back(Player(name3, 3));
+	players.push_back(Player(name4, 4));
+	players.push_back(Player(name5, 5));
+	players.push_back(Player(name6, 6));
 	dice1 = Dice();
 	dice2 = Dice();
-	player1Turn = true;
+	currentTurn = 0;
 	FillGameBoard();
-	for (int i = 0; i < boardSquares.size(); ++i) {
-		if (boardSquares.at(i)->GetType() == "Action") {
-			ownershipMap.insert({ i, -1 });
-		}
-		else {
-			ownershipMap.insert({ i, 0 });
-		}
-	}
 }
 
 void GameLogic::PlayGame() {
 	int numDoubles = 0;
 	int turnRoll = 0;
-int dummy = 0;
+	int dummy = 0;
 	while (true) {
 		dice1.RollDice();
 		dice2.RollDice();
@@ -50,14 +46,10 @@ int dummy = 0;
 			if (numDoubles == 3) {
 				//FIXME: Execute go to jail action for current player
 				break;
-			} else if (player1Turn) {
-				if (player1.GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
-				player1.MovePosition(turnRoll);
-				//FIXME: Execute purchse/pay-rent/action property action
 			}
 			else {
-				if(player2.GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
-				player2.MovePosition(turnRoll);
+				if (players.at(currentTurn).GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
+				players.at(currentTurn).MovePosition(turnRoll);
 				//FIXME: Execute purchse/pay-rent/action property action
 			}
 			dice1.RollDice();
@@ -65,18 +57,69 @@ int dummy = 0;
 			turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
 		}
 		// this handles the case when the dice rolls do not have the same values
-		if (player1Turn) {
-			if (player1.GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
-			player1.MovePosition(turnRoll);
-			//FIXME: Execute purchse/pay-rent/action property action
+		if (players.at(currentTurn).GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
+		players.at(currentTurn).MovePosition(turnRoll);
+		if (currentTurn < 5) {
+			currentTurn++;
 		}
 		else {
-			if (player2.GetPosition() + turnRoll >= 40) { turnRoll = turnRoll - 40; }
-			player2.MovePosition(turnRoll);
-			//FIXME: Execute purchse/pay-rent/action property action
+			currentTurn = 0;
 		}
-		player1Turn = !player1Turn;
 	}
+}
+
+//FIXME: Should handle accessing the correct conatiner for the sequence. Possibly pass this to the property function
+void GameLogic::SequenceDecision(int roll, bool p1Turn) {
+	if (properties.find(roll) != properties.end()) {
+		//PropertySequence(roll, turn);
+	}
+	else if (railroads.find(roll) != railroads.end()) {
+		//RailroadSequence(roll, turn);
+	}
+	else if (utilities.find(roll) != utilities.end()) {
+		//utilitiesSequence(roll, turn)
+	}
+	else {
+		//actionSequence(roll, turn);
+	}
+}
+
+/*
+void GameLogic::PropertySequence(int position, bool p1Turn) {
+	int cost = (boardSquares.at(position))->GetCost();
+	string userResponse;
+	if ((boardSquares.at(position))->PropIsOwned()) {
+		if (p1Turn) {
+			player1.PayRent(cost);
+			player2.CollectRent(cost);
+		}
+		else {
+			player2.PayRent(cost);
+			player1.CollectRent(cost);
+		}
+	}
+	else {
+		cout << "Would you like to purchase this property? Cost: $" << cost << endl;
+		//FIXME: Needs to error check for proper input
+		cin >> userResponse;
+		if (userResponse == "yes") {
+			// FIXME: Check if player has the networth to purchase this property
+			((Property*)(boardSquares.at(position)))->PurchaseProp();
+			if (p1Turn) {
+				player1.PurchaseProperty(cost);
+				// add color to player1 list of owned properties
+			}
+			else {
+				player2.PurchaseProperty(cost);
+				// add color to player2 list of owned properties
+			}
+		}
+	}
+}
+*/
+
+void GameLogic::AuctionSequence() {
+	//Program this late if time allows
 }
 
 void GameLogic::FillGameBoard() {
@@ -94,6 +137,7 @@ void GameLogic::FillGameBoard() {
 	int mortgage;
 	int houseCost;
 	int hotelCost;
+	int index = 0;
 	while (!gameProps.eof()) {
 		gameProps >> propType;
 		if (propType == "Property") {
@@ -109,11 +153,13 @@ void GameLogic::FillGameBoard() {
 			gameProps >> mortgage;
 			gameProps >> houseCost;
 			gameProps >> hotelCost;
-			boardSquares.push_back(new Property(name, color, cost, rentBase, rent1House, rent2House, rent3House, rent4House, rentHotel, mortgage, houseCost, hotelCost));
+			Property newProp = Property(name, color, cost, rentBase, rent1House, rent2House, rent3House, rent4House, rentHotel, mortgage, houseCost, hotelCost);
+			properties.insert({ index, newProp });
 		}
 		else if (propType == "Action") {
 			gameProps >> name;
-			boardSquares.push_back(new Action(name));
+			Action newAction = Action(name);
+			actions.insert({ index, newAction });
 		}
 		else if (propType == "Railroad") {
 			gameProps >> name;
@@ -123,22 +169,37 @@ void GameLogic::FillGameBoard() {
 			gameProps >> rent3House;
 			gameProps >> rent4House;
 			gameProps >> mortgage;
-			boardSquares.push_back(new Railroad(name, cost, rent1House, rent2House, rent3House, rent4House, mortgage));
+			Railroad newRR = Railroad(name, cost, rent1House, rent2House, rent3House, rent4House, mortgage);
+			railroads.insert({ index, newRR });
 		}
 		else {
 			gameProps >> name;
 			gameProps >> cost;
 			gameProps >> mortgage;
-			boardSquares.push_back(new Utility(name, cost, mortgage));
+			Utility newUtil = Utility(name, cost, mortgage);
+			utilities.insert({ index, newUtil });
 		}
+		++index;
 	}
 }
 
 void GameLogic::PrintBoard() {
-	for (int i = 0; i < boardSquares.size(); ++i) {
-		boardSquares.at(i)->PrintDescription();
-		cout << endl << endl;
-		cout << i << " : " << ownershipMap.at(i) << endl;
-		cout << endl;
+	for (int i = 0; i < 18; ++i) {
+		if (properties.find(i) != properties.end()) {
+			//PropertySequence(roll, turn);
+			properties[i].PrintDescription();
+		}
+		else if (railroads.find(i) != railroads.end()) {
+			//RailroadSequence(roll, turn);
+			railroads[i].PrintDescription();
+		}
+		else if (utilities.find(i) != utilities.end()) {
+			//utilitiesSequence(roll, turn)
+			utilities[i].PrintDescription();
+		}
+		else {
+			//actionSequence(roll, turn);
+			actions[i].PrintDescription();
+		}
 	}
 }

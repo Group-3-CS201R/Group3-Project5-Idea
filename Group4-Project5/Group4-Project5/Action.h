@@ -8,6 +8,7 @@ using namespace std;
 
 class Action : public Tile {
 public:
+	Action() {};
 	Action(string name);
 	string GetActionType();
 	void PrintDescription();

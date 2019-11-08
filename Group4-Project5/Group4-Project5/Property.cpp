@@ -8,8 +8,8 @@ using namespace std;
 
 Property::Property(string name, string color, int cost, int mortgage, int rentBase, int rentOneHouse, int rentTwoHouse,
 	int rentThreeHouse, int rentFourHouse, int rentHotel, int houseBuyCost, int hotelBuyCost) :
-	Tile(name, "Property"), propColor(color), propOwned(false), hotelOwned(false), housesOnProp(0), 
-	mortgageValue(mortgage), houseCost(houseBuyCost), hotelCost(hotelBuyCost), HotelIsOwned(false),
+	Tile(name, "Property"), propColor(color), propOwned(false), housesOnProp(0), 
+	mortgageValue(mortgage), houseCost(houseBuyCost), hotelCost(hotelBuyCost), hotelIsOwned(false),
 	propCost(cost)
 {
 	rents.resize(6);
@@ -19,6 +19,18 @@ Property::Property(string name, string color, int cost, int mortgage, int rentBa
 	rents.at(3) = rentThreeHouse;
 	rents.at(4) = rentFourHouse;
 	rents.at(5) = rentHotel;
+}
+
+bool Property::PropIsOwned() {
+	return propOwned;
+}
+
+void Property::PurchaseProp() {
+	propOwned = true;
+}
+
+string Property::GetColor() {
+	return propColor;
 }
 
 // textual based data representation that will be deleted if/when GUI is created

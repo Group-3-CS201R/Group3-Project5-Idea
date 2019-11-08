@@ -1,2 +1,7 @@
 ﻿  Group4-Project5.cpp
+  Property.cpp
+  GameLogic.cpp
+  Utility.cpp
+  Generating Code...
+C:\Users\gabri\Desktop\CS201-Group3-Project5\Group4-Project5\Group4-Project5\Utility.cpp(25): warning C4715: 'Utility::RentCalculator': not all control paths return a value
   Group4-Project5.vcxproj -> C:\Users\gabri\Desktop\CS201-Group3-Project5\Group4-Project5\Debug\Group4-Project5.exe

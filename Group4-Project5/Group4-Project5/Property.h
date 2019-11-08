@@ -9,11 +9,13 @@ using namespace std;
 
 class Property : public Tile {
 public:
+	Property() {};
 	Property(string propName, string color, int propertyCost, int mortgageValue, int rentBase, int rentOneHouse, int rentTwoHouse,
 		int rentThreeHouse,int rentFourHouse, int rentHotel, int houseBuyCost, int hotelBuyCost);
 	void PrintDescription();
 	bool PropIsOwned();
-	bool HotelIsOwned;
+	void PurchaseProp();
+	string GetColor();
 	int GetCost();
 	int GetRent();
 	int GetMortgage();
@@ -26,5 +28,5 @@ private:
 	int mortgageValue;
 	int houseCost;
 	int hotelCost;
-	bool hotelOwned;
+	bool hotelIsOwned;
 };

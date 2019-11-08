@@ -20,3 +20,4 @@ string Tile::GetType() {
 void Tile::PrintDescription() {
 	cout << "" << endl;
 }
+

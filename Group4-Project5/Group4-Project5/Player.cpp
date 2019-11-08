@@ -85,3 +85,21 @@ bool Player::CanPurchaseHouse(string colorToPurchase) {
 		return false;
 	}
 }
+
+void Player::PayRent(int toPay) {
+	if (netWorth >= toPay) {
+		netWorth -= toPay;
+	}
+	else {
+		netWorth = 0;	
+	}
+}
+
+void Player::CollectRent(int toCollect) {
+	netWorth += toCollect;
+}
+
+//FIXME: Needs error checking for if property can be purchased
+void Player::PurchaseProperty(int propCost) {
+	netWorth -= propCost;
+}

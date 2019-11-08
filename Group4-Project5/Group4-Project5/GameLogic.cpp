@@ -24,6 +24,10 @@ GameLogic::GameLogic() {
 	dice1 = Dice();
 	dice2 = Dice();
 	currentTurn = 0;
+	jailLocation = 10;
+	//FIXME: Use these two variables to track if a player has one game (numPlayers = (numBankrupt - 1))
+	numPlayers = 0;
+	numBankrupt = 0;
 	FillGameBoard();
 }
 
@@ -40,7 +44,6 @@ void GameLogic::PlayGame() {
 		dice2.RollDice();
 		turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
 		cout << endl << "Player: " << (currentTurn + 1) << " Roll: " << turnRoll << endl;
-
 		// this handles the case of 1 or more dice rolls that have the same value
 		while (dice1.GetDiceValue() == dice2.GetDiceValue()) {
 			numDoubles++;
@@ -64,6 +67,10 @@ void GameLogic::PlayGame() {
 		//FIXME: Move this error checking into Player class
 		players.at(currentTurn).MovePosition(turnRoll);
 		SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
+		// FIXME: A queue should be implemented to get rid of this portion
+		if (players.at(currentTurn).IsBankrupt()) {
+			//FIXME: Execute bankruptcy property cleanup
+		}
 		currentTurn++;
 		if (currentTurn == players.size()) {
 			currentTurn = 0;
@@ -101,7 +108,7 @@ void GameLogic::RailroadSequence(int position) {
 		cin >> userResponse;
 		if (userResponse == "yes") {
 			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(railroads[position].GetCost());
+			players.at(currentTurn).PurchaseProperty(railroads[position].GetCost(), position);
 			railroads[position].SetOwnedBy(currentTurn);
 		}
 	}
@@ -117,13 +124,20 @@ void GameLogic::PropertySequence(int position) {
 	}
 	else {
 		properties[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? -> ";
-		//FIXME: Needs to error check for proper input
+		cout << endl << "Would you like to purchase this property? (y/n) -> ";
 		cin >> userResponse;
-		if (userResponse == "yes") {
-			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(properties[position].GetCost());
-			properties[position].SetOwnedBy(currentTurn);
+		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
+			cout << "Please give a valid response (y/n)." << endl;
+			cout << endl << "Would you like to purchase this property? (y/n) -> ";
+			cin >> userResponse;
+		}
+		if (userResponse == "y" || userResponse == "Y") {
+			// checks that player has enough money to purchase the proerty in question
+			if (players.at(currentTurn).GetNetWorth() >= properties[position].GetCost()) {
+				players.at(currentTurn).PurchaseProperty(properties[position].GetCost(), position);
+				properties[position].SetOwnedBy(currentTurn);
+			}
+			else { cout << "Sorry, you don't have enough money to purchase this property." << endl; }
 		}
 	}
 }
@@ -143,20 +157,21 @@ void GameLogic::UtilitySequence(int position, int roll) {
 		cin >> userResponse;
 		if (userResponse == "yes") {
 			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(utilities[position].GetCost());
+			players.at(currentTurn).PurchaseProperty(utilities[position].GetCost(), position);
 			utilities[position].SetOwnedBy(currentTurn);
 		}
 	}
 }
 
 void GameLogic::ActionSequence(int position) {
-	//FIXME: This is for testing. Needs to be removed later.
-	if (actions.find(position) == actions.end()) {
-		cout << "Failed" << endl;
-	}
 	actions[position].PrintDescription();
 }
 
+void GameLogic::JailSequence() {
+	// Player can pay $50 to get out now
+	// Player can try to roll a double
+	// Player can wait three turns then pay $50
+}
 
 void GameLogic::AuctionSequence() {
 	//Program this late if time allows
@@ -232,6 +247,7 @@ void GameLogic::FillPlayersVect() {
 		cout << "Enter name of player #" << (i + 1) << " -> ";
 		getline(cin, userName);
 		players.push_back(Player(userName, (i + 1)));
+		numPlayers++;
 		if (i > 0) {
 			cout << endl << "Would you like to add another player?\nPress y to add another player, any other key to start playing. -> ";
 			getline(cin, keepAdding);
@@ -243,4 +259,3 @@ void GameLogic::FillPlayersVect() {
 	}
 	cout << endl << "Let's get started!\n" << endl;
 }
-

@@ -21,7 +21,9 @@ public:
 	bool CanPurchaseHouse(string colorToPurchase);
 	void PayRent(int toPay);
 	void CollectRent(int toCollect);
-	void PurchaseProperty(int propCost);
+	void PurchaseProperty(int propCost, int position);
+	bool IsBankrupt();
+	void GoToJail();
 private:
 	string playerName;
 	string playerColor;
@@ -31,5 +33,6 @@ private:
 	int playerPosition;
 	int rollsInJail;
 	bool inJail;
+	vector<int> propsOwned;
 	map<string, int> numOfColor;
 };

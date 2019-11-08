@@ -40,8 +40,16 @@ int Player::GetPosition() {
 	return playerPosition;
 }
 
+void Player::GoToJail() {
+	cout << "You have been put in jail. You will need to either roll a double, pay $50 to get out, or wait 3 turns then pay $50" << endl;
+	inJail = true;
+}
+
 bool Player::IsInJail() {
-	if (rollsInJail == 3) { inJail = false; }
+	if (rollsInJail == 3) { 
+		inJail = false; 
+		rollsInJail = 0;
+	}
 	rollsInJail++;
 	if (inJail) {
 		return true;
@@ -103,7 +111,14 @@ void Player::CollectRent(int toCollect) {
 	netWorth += toCollect;
 }
 
-//FIXME: Needs error checking for if property can be purchased
-void Player::PurchaseProperty(int propCost) {
+// adds item to owned properties to handle the case of bankruptcy 
+void Player::PurchaseProperty(int propCost, int position) {
 	netWorth -= propCost;
+	propsOwned.push_back(position);
+}
+
+// Checks if player is out of money, meaning that the player is bankrupt
+bool Player::IsBankrupt() {
+	if (netWorth <= 0) { return true; }
+	return false;
 }

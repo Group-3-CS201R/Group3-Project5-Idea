@@ -27,6 +27,7 @@ public:
 	void RailroadSequence(int position);
 	void UtilitySequence(int position, int roll);
 	void ActionSequence(int position);
+	void JailSequence();
 	void FillPlayersVect();
 private:
 	Dice dice1;
@@ -43,4 +44,7 @@ private:
 	map<int, Railroad> railroads;
 	map<int, Utility> utilities;
 	map<int, Action> actions;
+	int jailLocation;
+	int numPlayers;
+	int numBankrupt;
 };

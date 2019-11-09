@@ -68,7 +68,7 @@ void GameLogic::PlayGame() {
 			
 		}
 		currentTurn++;
-		if (currentTurn == players.size()) {
+		if (currentTurn >= players.size()) {
 			currentTurn = 0;
 		}
 	}

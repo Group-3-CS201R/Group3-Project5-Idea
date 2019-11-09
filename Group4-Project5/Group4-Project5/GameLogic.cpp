@@ -194,7 +194,7 @@ void GameLogic::FillGameBoard() {
 	int hotelCost;
 	int index = 0;
 	while (!gameProps.eof()) {
-		gameProps >> propType;
+ 		gameProps >> propType;
 		if (propType == "Property") {
 			gameProps >> name;
 			gameProps >> color;
@@ -236,6 +236,7 @@ void GameLogic::FillGameBoard() {
 		}
 		++index;
 	}
+	gameProps.close();
 }
 
 void GameLogic::FillPlayersVect() {

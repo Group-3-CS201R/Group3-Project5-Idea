@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Property::Property(string name, string color, int cost, int mortgage, int rentBase, int rentOneHouse, int rentTwoHouse,
-	int rentThreeHouse, int rentFourHouse, int rentHotel, int houseBuyCost, int hotelBuyCost) :
+Property::Property(string name, string color, int cost, int rentBase, int rentOneHouse, int rentTwoHouse,
+	int rentThreeHouse, int rentFourHouse, int rentHotel, int mortgage, int houseBuyCost, int hotelBuyCost) :
 	Tile(name, "Property"), propColor(color), propOwned(false), housesOnProp(0), 
 	mortgageValue(mortgage), houseCost(houseBuyCost), hotelCost(hotelBuyCost), hotelIsOwned(false),
 	propCost(cost), ownedByNum(0)

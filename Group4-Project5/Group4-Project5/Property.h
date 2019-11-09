@@ -10,8 +10,8 @@ using namespace std;
 class Property : public Tile {
 public:
 	Property() {};
-	Property(string propName, string color, int propertyCost, int mortgageValue, int rentBase, int rentOneHouse, int rentTwoHouse,
-		int rentThreeHouse,int rentFourHouse, int rentHotel, int houseBuyCost, int hotelBuyCost);
+	Property(string propName, string color, int propertyCost, int rentBase, int rentOneHouse, int rentTwoHouse,
+		int rentThreeHouse,int rentFourHouse, int rentHotel, int mortgage, int houseBuyCost, int hotelBuyCost);
 	void PrintDescription();
 	bool PropIsOwned();
 	void PurchaseProp();

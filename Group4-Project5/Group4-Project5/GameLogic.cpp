@@ -17,8 +17,6 @@
 
 using namespace std;
 
-// Use map to show who owns what propert(0 - no one, 1 - player1, 2 - player2, -1 - not ownable)
-
 GameLogic::GameLogic() {
 	FillPlayersVect();
 	dice1 = Dice();
@@ -64,12 +62,10 @@ void GameLogic::PlayGame() {
 			turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
 		}
 		// this handles the case when the dice rolls do not have the same values
-		//FIXME: Move this error checking into Player class
 		players.at(currentTurn).MovePosition(turnRoll);
 		SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
-		// FIXME: A queue should be implemented to get rid of this portion
 		if (players.at(currentTurn).IsBankrupt()) {
-			//FIXME: Execute bankruptcy property cleanup
+			
 		}
 		currentTurn++;
 		if (currentTurn == players.size()) {
@@ -98,18 +94,26 @@ void GameLogic::RailroadSequence(int position) {
 	int cost = railroads[position].GetCost();
 	string userResponse;
 	if (railroads[position].PropIsOwned()) {
+		cout << railroads[position].GetName() << " is owned by player number: " << railroads[position].GetOwnedBy() + 1 << ". You owe them $" << railroads[position].GetRent() << " in rent.";
 		players.at(currentTurn).PayRent(cost);
 		players.at(railroads[position].GetOwnedBy()).CollectRent(cost);
 	}
 	else {
 		railroads[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? -> ";
-		//FIXME: Needs to error check for proper input
+		cout << endl << "Would you like to purchase this property? (y/n) -> ";
 		cin >> userResponse;
-		if (userResponse == "yes") {
-			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(railroads[position].GetCost(), position);
-			railroads[position].SetOwnedBy(currentTurn);
+		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
+			cout << "Please give a valid response (y/n)." << endl;
+			cout << endl << "Would you like to purchase this property? (y/n) -> ";
+			cin >> userResponse;
+		}
+		if (userResponse == "y" || userResponse == "Y") {
+			// checks that player has enough money to purchase the proerty in question
+			if (players.at(currentTurn).GetNetWorth() >= railroads[position].GetCost()) {
+				players.at(currentTurn).PurchaseProperty(railroads[position].GetCost(), position);
+				railroads[position].SetOwnedBy(currentTurn);
+			}
+			else { cout << "Sorry, you don't have enough money to purchase this property." << endl; }
 		}
 	}
 }
@@ -118,7 +122,7 @@ void GameLogic::PropertySequence(int position) {
 	int cost = properties[position].GetCost();
 	string userResponse;
 	if (properties[position].PropIsOwned()) {
-		cout << "This property is owned by player number: " << properties[position].GetOwnedBy() << " you owe $" << properties[position].GetRent() << " in rent.";
+		cout << properties[position].GetName() << " is owned by player number: " << properties[position].GetOwnedBy() + 1 << ". You owe them $" << properties[position].GetRent() << " in rent.";
 		players.at(currentTurn).PayRent(cost);
 		players.at(properties[position].GetOwnedBy()).CollectRent(cost);
 	}
@@ -146,19 +150,26 @@ void GameLogic::UtilitySequence(int position, int roll) {
 	int cost = utilities[position].GetCost();
 	string userResponse;
 	if (utilities[position].PropIsOwned()) {
-		//FIXME: Print rent cost message
+		cout << utilities[position].GetName() << " is owned by player number: " << utilities[position].GetOwnedBy() + 1 << ". You owe them $" << utilities[position].GetRent() << " in rent.";
 		players.at(currentTurn).PayRent(cost);
 		players.at(utilities[position].GetOwnedBy()).CollectRent(cost);
 	}
 	else {
 		utilities[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? -> ";
-		//FIXME: Needs to error check for proper input
+		cout << endl << "Would you like to purchase this property? (y/n) -> ";
 		cin >> userResponse;
-		if (userResponse == "yes") {
-			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(utilities[position].GetCost(), position);
-			utilities[position].SetOwnedBy(currentTurn);
+		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
+			cout << "Please give a valid response (y/n)." << endl;
+			cout << endl << "Would you like to purchase this property? (y/n) -> ";
+			cin >> userResponse;
+		}
+		if (userResponse == "y" || userResponse == "Y") {
+			// checks that player has enough money to purchase the proerty in question
+			if (players.at(currentTurn).GetNetWorth() >= utilities[position].GetCost()) {
+				players.at(currentTurn).PurchaseProperty(utilities[position].GetCost(), position);
+				utilities[position].SetOwnedBy(currentTurn);
+			}
+			else { cout << "Sorry, you don't have enough money to purchase this property." << endl; }
 		}
 	}
 }

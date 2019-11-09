@@ -31,8 +31,9 @@ void Player::PrintPlayerInfo() {
 //FIXME: Change to 39 after testing
 void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
-	if (playerPosition > 17) {
-		playerPosition -= 17;
+	if (playerPosition > 39) {
+		cout << "You passed GO. You Receive $200 from the bank." << endl;
+		playerPosition -= 39;
 	}
 }
 

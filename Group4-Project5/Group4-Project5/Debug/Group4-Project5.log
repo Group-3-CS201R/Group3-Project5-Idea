@@ -1,4 +1,3 @@
 ﻿  GameLogic.cpp
-  Player.cpp
-  Generating Code...
-  Group4-Project5.vcxproj -> C:\Users\Nolan\Documents\CS201R\Group3-Project5-Idea\Group4-Project5\Debug\Group4-Project5.exe
+C:\Users\Nolan\Documents\CS201R\Group3-Project5-Idea\Group3-Project5-Idea\Group4-Project5\Group4-Project5\GameLogic.cpp(179,79): warning C4244:  'argument': conversion from 'double' to 'int', possible loss of data
+  Group4-Project5.vcxproj -> C:\Users\Nolan\Documents\CS201R\Group3-Project5-Idea\Group3-Project5-Idea\Group4-Project5\Debug\Group4-Project5.exe

@@ -33,6 +33,8 @@ void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
 	if (playerPosition > 17) {
 		playerPosition -= 17;
+		cout << "\nYou passed go. You receive $200 from the bank\n";
+		CollectRent(200);
 	}
 }
 

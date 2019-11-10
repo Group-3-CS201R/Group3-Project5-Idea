@@ -41,7 +41,7 @@ void GameLogic::PlayGame() {
 			JailSequence();
 			continue;
 		}
-		cout << endl << "Player: " << (currentTurn + 1) <<  ".\nPress any key to roll -> ";
+		cout << endl << "Player: " << (currentTurn + 1) <<  "\nPress any key to roll -> ";
 		cin >> stallyBoi;
 		cin.ignore();
 		dice1.RollDice();
@@ -69,7 +69,7 @@ void GameLogic::PlayGame() {
 		}
 		// this handles the case when the dice rolls do not have the same values
 		//FIXME: Move this error checking into Player class
-		cout << "\nYou currently have : $" << players.at(currentTurn).GetNetWorth() << "\n\n";
+		cout << "\nYou currently have : $" << players.at(currentTurn).GetNetWorth() << "\n";
 		players.at(currentTurn).MovePosition(turnRoll);
 		SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
 		// FIXME: A queue should be implemented to get rid of this portion
@@ -170,6 +170,21 @@ void GameLogic::UtilitySequence(int position, int roll) {
 
 void GameLogic::ActionSequence(int position) {
 	actions[position].PrintDescription();
+	if (actions[position].GetName() == "GO_TO_JAIL") {
+		players.at(currentTurn).MovePosition(jailLocation); // moves player to jail
+		players.at(currentTurn).GoToJail(); // changes bool in class
+	}
+	else if (actions[position].GetName() == "INCOME_TAX") {
+		if ((players.at(currentTurn).GetNetWorth() * .1) <= 200) {
+			players.at(currentTurn).CollectRent((players.at(currentTurn).GetNetWorth() * -.1));
+		}
+		else {
+			players.at(currentTurn).CollectRent(-200);
+		}
+	}
+	else if (actions[position].GetName() == "LUXURY_TAX"){
+		players.at(currentTurn).CollectRent(-75);
+	}
 }
 
 void GameLogic::JailSequence() {
@@ -205,10 +220,6 @@ void GameLogic::JailSequence() {
 	if (currentTurn == players.size()) {
 		currentTurn = 0;
 	}
-	
-	// Player can pay $50 to get out now
-	// Player can try to roll a double
-	// Player can wait three turns then pay $50
 }
 
 void GameLogic::AuctionSequence() {

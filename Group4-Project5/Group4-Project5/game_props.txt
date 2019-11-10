@@ -3,7 +3,7 @@ Property Mediterranean_Avenue BROWN 60 2 10 30 90 160 250 20 50 50
 Action COMMUNITY_CHEST
 Property Baltic_Avenue BROWN 60 4 20 60 180 320 450 30 50 50
 Action INCOME_TAX
-Railroad Reading 200 25 50 100 200 100
+Railroad Reading_Railroad 200 25 50 100 200 100
 Property Oriental_Avenue BLUE 100 6 30 90 270 400 550 50 50 50
 Action CHANCE
 Property Vermont_Avenue BLUE 100 6 30 90 270 400 550 50 50 50
@@ -23,7 +23,7 @@ Property Kentucky_Avenue RED 220 18 90 250 700 875 1050 110 150 150
 Action CHANCE
 Property Indiana_Avenue RED 220 18 90 250 700 875 1050 110 150 150
 Property Illinois_Avenue RED 240 20 100 300 750 925 1100 120 150 150
-Railroad BandO 200 25 50 100 200 100
+Railroad B&O_Railroad 200 25 50 100 200 100
 Property Atlantic_Avenue YELLOW 260 22 110 330 800 975 1150 130 150 150
 Property Ventnor_Avenue YELLOW 260 22 110 330 800 975 1150 130 150 150
 Utility Water_Works 150 75
@@ -33,7 +33,7 @@ Property Pacific_Avenue GREEN 300 26 130 390 900 1100 1275 150 200 200
 Property North_Carolina_Avenue GREEN 300 26 130 390 900 1100 1275 150 200 200
 Action COMMUNITY_CHEST
 Property Pennsylvania_Avenue GREEN 320 28 150 450 1000 1200 1400 160 200 200
-Railroad Short_Line 200 25 50 100 200 100
+Railroad Short_Line_Railroad 200 25 50 100 200 100
 Action CHANCE
 Property Park_Place NAVY 350 35 175 500 1100 1300 1500 175 200 200
 Action LUXURY_TAX

@@ -29,6 +29,7 @@ public:
 	void ActionSequence(int position);
 	void JailSequence();
 	void FillPlayersVect();
+	void BankruptcyHandler(vector<int> positions);
 private:
 	Dice dice1;
 	Dice dice2;

@@ -29,10 +29,16 @@ public:
 	bool GetInJail();
 	void ResetDoubles();
 	void FreeFromJail();
+	vector<int> GetVect();
+	void AddRailroad();
+	int GetNumRailroads();
+	void AddUtil();
+	int GetNumUtils();
 private:
 	string playerName;
 	string playerColor;
 	int numRailRoads;
+	int numUtils;
 	int playerNum;
 	int netWorth;
 	int playerPosition;
@@ -41,4 +47,5 @@ private:
 	int playerDoubles;
 	vector<int> propsOwned;
 	map<string, int> numOfColor;
+
 };

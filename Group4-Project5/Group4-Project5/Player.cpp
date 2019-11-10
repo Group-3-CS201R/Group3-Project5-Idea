@@ -9,7 +9,7 @@ using namespace std;
 Player::Player() {}
 
 Player::Player(string name, int num) : playerName(name), playerNum(num), netWorth(1500), playerPosition(0),
-inJail(false), rollsInJail(0), numRailRoads(0), playerDoubles(0)
+inJail(false), rollsInJail(0), numRailRoads(0), playerDoubles(0), numUtils(0)
 {
 	numOfColor.insert({ "PINK", 0 });
 	numOfColor.insert({ "ORANGE", 0 });
@@ -31,10 +31,10 @@ void Player::PrintPlayerInfo() {
 //FIXME: Change to 39 after testing
 void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
-	if (playerPosition > 17) {
-		playerPosition -= 17;
+	if (playerPosition > 39) {
+		playerPosition -= 39;
 		cout << "\nYou passed go. You receive $200 from the bank\n";
-		CollectRent(200);
+		netWorth += 200;
 	}
 }
 
@@ -81,8 +81,28 @@ string Player::GetColor() {
 	return playerColor;
 }
 
+vector<int> Player::GetVect() {
+	return propsOwned;
+}
+
+void Player::AddUtil() {
+	numUtils++;
+}
+
+int Player::GetNumUtils() {
+	return numUtils;
+}
+
+void Player::AddRailroad() {
+	numRailRoads++;
+}
+
 void Player::AddToColorMap(string colorToAdd) {
 	numOfColor[colorToAdd]++;
+}
+
+int Player::GetNumRailroads() {
+	return numRailRoads;
 }
 
 bool Player::CanPurchaseHouse(string colorToPurchase) {

@@ -41,49 +41,68 @@ void GameLogic::PlayGame() {
 			JailSequence();
 			continue;
 		}
-		cout << endl << "Player: " << (currentTurn + 1) <<  "\nPress any key to roll -> ";
+		cout << endl << "Player: " << (currentTurn + 1) <<  "\nPress any key to roll -> "; // stalls game until user is ready to roll
 		cin >> stallyBoi;
 		cin.ignore();
 		dice1.RollDice();
 		dice2.RollDice();
-		turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
+		turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue(); // turnRoll is the combination of "rolling" the two dice
 		cout << endl << "Player: " << (currentTurn + 1) << " Roll: " << turnRoll << endl;
 		// this handles the case of 1 or more dice rolls that have the same value
-		if (dice1.GetDiceValue() == dice2.GetDiceValue()) {
-
-			// the player's number of doubles count increases
+		while (dice1.GetDiceValue() == dice2.GetDiceValue()) {
 			players.at(currentTurn).IncrementDoubles();
+
 			if (players.at(currentTurn).DoublesRolled() == 3) { // change this to 1 if you want to test jail
 				players.at(currentTurn).MovePosition(jailLocation); // moves player to jail
 				players.at(currentTurn).GoToJail(); // changes bool in class
 				currentTurn++; // changes player turn and ends the jailed's turn
-				if (currentTurn == players.size()) {
-					currentTurn = 0;
-				}
-				continue;
+				players.at(currentTurn).ResetDoubles();
+				break;
 			}
+			// implements an entirely new turn sequence since when double is rolled, the user keeps rolling until a non-double is rolled, or three doubles are rolled and they go to jail
+			players.at(currentTurn).MovePosition(turnRoll);
+			SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
 			cout << endl << "You have rolled " << players.at(currentTurn).DoublesRolled() << " double(s). Three doubles in a row will land you in Jail. Shake those dice carefully!" << endl << endl;
+			cout << endl << "Player: " << (currentTurn + 1) << "\nPress any key to roll -> ";
+			cin >> stallyBoi;
+			cin.ignore();
+			dice1.RollDice();
+			dice2.RollDice();
+			turnRoll = dice1.GetDiceValue() + dice2.GetDiceValue();
+			cout << endl << "Player: " << (currentTurn + 1) << " Roll: " << turnRoll << endl;
+			cout << "\nYou currently have : $" << players.at(currentTurn).GetNetWorth() << "\n";
+			if (players.at(currentTurn).IsBankrupt()) { break; } // Checks to see if th player has run out of money during their turn
+		}  
+		if (players.at(currentTurn).DoublesRolled() == 3) { // this means that the player is currently in jail and it is the next players turn
+			currentTurn++;
 		}
-		else { 
+		else {
+			// this handles the case when the dice rolls do not have the same values
 			players.at(currentTurn).ResetDoubles();  // clears the consecutive roll count
+			cout << "\nYou currently have : $" << players.at(currentTurn).GetNetWorth() << "\n";
+			players.at(currentTurn).MovePosition(turnRoll); // This moves the players position in the gameboard
+			SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
+			if (players.at(currentTurn).IsBankrupt()) {
+				//FIXME: Execute bankruptcy property cleanup
+			}
+			currentTurn++;
+			if (currentTurn == players.size()) { // checks if the player sequence must be restarted
+				currentTurn = 0;
+			}
 		}
-		// this handles the case when the dice rolls do not have the same values
-		//FIXME: Move this error checking into Player class
-		cout << "\nYou currently have : $" << players.at(currentTurn).GetNetWorth() << "\n";
-		players.at(currentTurn).MovePosition(turnRoll);
-		SequenceDecision(players.at(currentTurn).GetPosition(), turnRoll);
-		// FIXME: A queue should be implemented to get rid of this portion
-		if (players.at(currentTurn).IsBankrupt()) {
-			//FIXME: Execute bankruptcy property cleanup
+		if (players.at(currentTurn).IsBankrupt()) { // checks if the player is bankrupt then executes a sequence free their properties to the bank erase them from the player vector
+			cout << endl << players.at(currentTurn).GetName() << " is bankrupt and is now out of the game. All property goes to the bank." << endl;
+			BankruptcyHandler(players.at(currentTurn).GetVect());
+			players.erase(players.begin() + currentTurn);
 		}
-		currentTurn++;
-		if (currentTurn == players.size()) {
-			currentTurn = 0;
+		if (players.size() == 1) { // if only one player remains, they are the winner of the game and the game is complete
+			cout << endl << "Player: " << players.at(0).GetName() << " wins the game!" << endl;
+			break;
 		}
 	}
 }
 
-
+// Checks which type of action to take for the tile at the current position
 void GameLogic::SequenceDecision(int position, int roll) {
 	if (properties.find(position) != properties.end()) {
 		PropertySequence(position);
@@ -99,22 +118,35 @@ void GameLogic::SequenceDecision(int position, int roll) {
 	}
 }
 
+
 void GameLogic::RailroadSequence(int position) {
 	int cost = railroads[position].GetCost();
 	string userResponse;
+	int rent;
+	// If the property is owned, than the rent on the property is collected from current player and given to the property owner
 	if (railroads[position].PropIsOwned()) {
-		players.at(currentTurn).PayRent(cost);
-		players.at(railroads[position].GetOwnedBy()).CollectRent(cost);
+		cout << railroads[position].GetName() << " property is owned by player number: " << railroads[position].GetOwnedBy() << " you owe $" << railroads[position].GetRent(players.at(currentTurn).GetNumRailroads()) << " in rent.";
+		rent = railroads[position].GetRent(players.at(currentTurn).GetNumRailroads());
+		players.at(currentTurn).PayRent(rent);
+		players.at(railroads[position].GetOwnedBy()).CollectRent(rent);
 	}
+	// 
 	else {
 		railroads[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? -> ";
-		//FIXME: Needs to error check for proper input
+		cout << endl << "Would you like to purchase this property? (y/n) -> ";
 		cin >> userResponse;
-		if (userResponse == "yes") {
-			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(railroads[position].GetCost(), position);
-			railroads[position].SetOwnedBy(currentTurn);
+		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
+			cout << "Please give a valid response (y/n)." << endl;
+			cout << endl << "Would you like to purchase this property? (y/n) -> ";
+			cin >> userResponse;
+		}
+		if (userResponse == "y" || userResponse == "Y") {
+			// checks that player has enough money to purchase the proerty in question
+			if (players.at(currentTurn).GetNetWorth() >= railroads[position].GetCost()) {
+				players.at(currentTurn).PurchaseProperty(railroads[position].GetCost(), position);
+				railroads[position].SetOwnedBy(currentTurn);
+			}
+			else { cout << "Sorry, you don't have enough money to purchase this property." << endl; }
 		}
 	}
 }
@@ -122,18 +154,20 @@ void GameLogic::RailroadSequence(int position) {
 void GameLogic::PropertySequence(int position) {
 	int cost = properties[position].GetCost();
 	string userResponse;
+	int rent;
 	if (properties[position].PropIsOwned()) {
-		cout << "This property is owned by player number: " << properties[position].GetOwnedBy() << " you owe $" << properties[position].GetRent() << " in rent.";
-		players.at(currentTurn).PayRent(cost);
-		players.at(properties[position].GetOwnedBy()).CollectRent(cost);
+		cout <<  properties[position].GetName() << " is owned by player number: " << properties[position].GetOwnedBy() << " you owe $" << properties[position].GetRent() << " in rent.";
+		rent = properties[position].GetRent();
+		players.at(currentTurn).PayRent(rent);
+		players.at(properties[position].GetOwnedBy()).CollectRent(rent);
 	}
 	else {
 		properties[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? (y/n) -> ";
+		cout << endl << "Would you like to purchase this railroad? (y/n) -> ";
 		cin >> userResponse;
 		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
 			cout << "Please give a valid response (y/n)." << endl;
-			cout << endl << "Would you like to purchase this property? (y/n) -> ";
+			cout << endl << "Would you like to purchase this railroad? (y/n) -> ";
 			cin >> userResponse;
 		}
 		if (userResponse == "y" || userResponse == "Y") {
@@ -150,20 +184,30 @@ void GameLogic::PropertySequence(int position) {
 void GameLogic::UtilitySequence(int position, int roll) {
 	int cost = utilities[position].GetCost();
 	string userResponse;
+	int rent;
 	if (utilities[position].PropIsOwned()) {
-		//FIXME: Print rent cost message
-		players.at(currentTurn).PayRent(cost);
-		players.at(utilities[position].GetOwnedBy()).CollectRent(cost);
+		cout << utilities[position].GetName() <<" is owned by player number: " << utilities[position].GetOwnedBy() << " you owe $" << utilities[position].GetRent(roll, players.at(currentTurn).GetNumUtils()) << " in rent.";
+		rent = utilities[position].GetRent(roll, players.at(currentTurn).GetNumUtils());
+		players.at(currentTurn).PayRent(rent);
+		players.at(utilities[position].GetOwnedBy()).CollectRent(rent);
 	}
 	else {
 		utilities[position].PrintDescription();
-		cout << endl << "Would you like to purchase this property? -> ";
-		//FIXME: Needs to error check for proper input
+		cout << endl << "Would you like to purchase this utility? (y/n) -> ";
 		cin >> userResponse;
-		if (userResponse == "yes") {
-			// FIXME: Check if player has the networth to purchase this property
-			players.at(currentTurn).PurchaseProperty(utilities[position].GetCost(), position);
-			utilities[position].SetOwnedBy(currentTurn);
+		while (userResponse != "y" && userResponse != "Y" && userResponse != "n" && userResponse != "N") {
+			cout << "Please give a valid response (y/n)." << endl;
+			cout << endl << "Would you like to purchase this utility? (y/n) -> ";
+			cin >> userResponse;
+		}
+		if (userResponse == "y" || userResponse == "Y") {
+			// checks that player has enough money to purchase the proerty in question
+			if (players.at(currentTurn).GetNetWorth() >= utilities[position].GetCost()) {
+				players.at(currentTurn).PurchaseProperty(utilities[position].GetCost(), position);
+				utilities[position].SetOwnedBy(currentTurn);
+				players.at(currentTurn).AddUtil();
+			}
+			else { cout << "Sorry, you don't have enough money to purchase this property." << endl; }
 		}
 	}
 }
@@ -222,6 +266,20 @@ void GameLogic::JailSequence() {
 	}
 }
 
+void GameLogic::BankruptcyHandler(vector<int> positions) {
+	for (int i = 1; i < positions.size(); ++i) {
+		if (properties.find(i) != properties.end()) {
+			properties[i].ReleaseProp();
+		}
+		else if (railroads.find(i) != railroads.end()) {
+			railroads[i].ReleaseProp();
+		}
+		else if (utilities.find(i) != utilities.end()) {
+			utilities[i].ReleaseProp();
+		}
+	}
+}
+
 void GameLogic::AuctionSequence() {
 	//Program this late if time allows
 }
@@ -241,7 +299,7 @@ void GameLogic::FillGameBoard() {
 	int mortgage;
 	int houseCost;
 	int hotelCost;
-	int index = 0;
+	int index = 1;
 	while (!gameProps.eof()) {
  		gameProps >> propType;
 		if (propType == "Property") {

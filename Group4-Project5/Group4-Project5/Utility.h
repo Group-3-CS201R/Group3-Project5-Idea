@@ -10,12 +10,13 @@ class Utility : public Tile {
 public:
 	Utility() {};
 	Utility(string name, int cost, int mortgage);
-	int RentCalculator(int diceRoll);
 	void PrintDescription();
 	int GetOwnedBy();
 	void SetOwnedBy(int num);
 	int GetCost();
 	bool PropIsOwned();
+	void ReleaseProp();
+	int GetRent(int roll, int numUtils);
 private:
 	bool propOwned;
 	int ownedByNum;

@@ -20,6 +20,7 @@ public:
 	int GetOwnedBy();
 	int GetCost();
 	int GetRent();
+	void ReleaseProp();
 	int GetMortgage();
 private:
 	string propColor;

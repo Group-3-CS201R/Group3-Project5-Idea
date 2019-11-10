@@ -46,6 +46,11 @@ void Property::SetOwnedBy(int player) {
 	propOwned = true;
 }
 
+void Property::ReleaseProp() {
+	ownedByNum = 0;
+	propOwned = false;
+}
+
 //FIXME: Should use number of houses to decide how much rent. Use a map the maps <color, housesOwned>
 int Property::GetRent() {
 	return rents.at(0);

@@ -16,6 +16,8 @@ public:
 	void SetOwnedBy(int num);
 	int GetCost();
 	bool PropIsOwned();
+	void ReleaseProp();
+	int GetRent(int numRailroads);
 private:
 	bool propOwned;
 	int ownedByNum;

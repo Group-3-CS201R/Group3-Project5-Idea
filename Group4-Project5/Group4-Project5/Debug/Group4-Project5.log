@@ -1,3 +1,9 @@
 ﻿  GameLogic.cpp
-C:\Users\Nolan\Documents\CS201R\Group3-Project5-Idea\Group3-Project5-Idea\Group4-Project5\Group4-Project5\GameLogic.cpp(179,79): warning C4244:  'argument': conversion from 'double' to 'int', possible loss of data
-  Group4-Project5.vcxproj -> C:\Users\Nolan\Documents\CS201R\Group3-Project5-Idea\Group3-Project5-Idea\Group4-Project5\Debug\Group4-Project5.exe
+C:\Users\gabri\G3P5\Group4-Project5\Group4-Project5\GameLogic.cpp(223,79): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Group4-Project5.cpp
+  Player.cpp
+  Railroad.cpp
+  Utility.cpp
+  Generating Code...
+C:\Users\gabri\G3P5\Group4-Project5\Group4-Project5\GameLogic.cpp(270,20): warning C4018: '<': signed/unsigned mismatch
+  Group4-Project5.vcxproj -> C:\Users\gabri\G3P5\Group4-Project5\Debug\Group4-Project5.exe

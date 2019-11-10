@@ -34,6 +34,17 @@ bool Railroad::PropIsOwned() {
 	return propOwned;
 }
 
+void Railroad::ReleaseProp() {
+	ownedByNum = 0;
+	propOwned = false;
+}
+
+//FIXME: needs to be calculated right
+int Railroad::GetRent(int numRailroads) {
+	return rents.at(numRailroads);
+}
+
+
 void Railroad::PrintDescription() {
 	cout << this->GetName() << endl;
 	cout << "Cost: $" << propCost << endl;

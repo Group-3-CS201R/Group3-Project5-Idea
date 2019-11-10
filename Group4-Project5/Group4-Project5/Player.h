@@ -24,6 +24,11 @@ public:
 	void PurchaseProperty(int propCost, int position);
 	bool IsBankrupt();
 	void GoToJail();
+	int DoublesRolled();
+	void IncrementDoubles();
+	bool GetInJail();
+	void ResetDoubles();
+	void FreeFromJail();
 private:
 	string playerName;
 	string playerColor;
@@ -33,6 +38,7 @@ private:
 	int playerPosition;
 	int rollsInJail;
 	bool inJail;
+	int playerDoubles;
 	vector<int> propsOwned;
 	map<string, int> numOfColor;
 };

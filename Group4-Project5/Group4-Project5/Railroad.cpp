@@ -34,10 +34,6 @@ bool Railroad::PropIsOwned() {
 	return propOwned;
 }
 
-int Railroad::GetRent() {
-	return 0;
-}
-
 void Railroad::PrintDescription() {
 	cout << this->GetName() << endl;
 	cout << "Cost: $" << propCost << endl;

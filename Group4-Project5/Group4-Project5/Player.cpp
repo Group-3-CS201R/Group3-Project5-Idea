@@ -9,7 +9,7 @@ using namespace std;
 Player::Player() {}
 
 Player::Player(string name, int num) : playerName(name), playerNum(num), netWorth(1500), playerPosition(0),
-inJail(false), rollsInJail(0), numRailRoads(0)
+inJail(false), rollsInJail(0), numRailRoads(0), playerDoubles(0)
 {
 	numOfColor.insert({ "PINK", 0 });
 	numOfColor.insert({ "ORANGE", 0 });
@@ -31,10 +31,8 @@ void Player::PrintPlayerInfo() {
 //FIXME: Change to 39 after testing
 void Player::MovePosition(int toMove) {
 	playerPosition += toMove;
-	if (playerPosition > 39) {
-		cout << "You passed GO. You Receive $200 from the bank." << endl;
-		netWorth += 200;
-		playerPosition -= 39;
+	if (playerPosition > 17) {
+		playerPosition -= 17;
 	}
 }
 
@@ -47,10 +45,11 @@ void Player::GoToJail() {
 	inJail = true;
 }
 
-bool Player::IsInJail() {
+bool Player::IsInJail() {  //increments the turns in jail, can be switched to void probably
 	if (rollsInJail == 3) { 
 		inJail = false; 
 		rollsInJail = 0;
+		netWorth -= 50;
 	}
 	rollsInJail++;
 	if (inJail) {
@@ -59,6 +58,15 @@ bool Player::IsInJail() {
 	else {
 		return false;
 	}
+	return inJail;
+}
+
+void Player::FreeFromJail() {  //increments the turns in jail, can be switched to void probably
+	inJail = false;
+}
+
+bool Player::GetInJail() { // a getter for if they are in jail or not
+	return inJail;
 }
 
 int Player::GetNetWorth() {
@@ -123,4 +131,19 @@ void Player::PurchaseProperty(int propCost, int position) {
 bool Player::IsBankrupt() {
 	if (netWorth <= 0) { return true; }
 	return false;
+}
+
+int Player::DoublesRolled() { // a getter for how many doubles a player has rolled
+	return playerDoubles;
+}
+
+void Player::ResetDoubles() { // resets the doubles to 0
+	playerDoubles = 0;
+}
+
+void Player::IncrementDoubles() { // increments the player doubles
+	playerDoubles += 1;
+	if (playerDoubles == 4) {
+		playerDoubles = 1;
+	}
 }

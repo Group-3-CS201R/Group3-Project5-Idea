@@ -40,8 +40,3 @@ int Utility::RentCalculator(int diceRoll) {
 		return 10 * diceRoll;
 	}
 }
-
-//FIXME: Actually calculate rent
-int Utility::GetRent() {
-	return 0;
-}
